@@ -1,0 +1,39 @@
+-------------------------------------------
+Rcode_utils
+S. J. Lycett
+30 Sept 2013
+
+Copyright: 	Samantha Lycett 2013
+License: 	GNU GPLv3
+-------------------------------------------
+
+This repository contains R scripts - http://www.r-project.org/
+
+These are utility scripts (mostly custom defined functions),
+useful for processing sequence and tree data, mostly for my own purposes but you might find them useful too.
+
+To date I've been working on Influenza and the scripts are geared towards NCBI Influenza Virus Resource fasta sequence data, and also BEAST trees.  I use R package ape to help with the tree manipulation.
+
+Generally - open them in R, "compile" them into the workspace, then look towards the bottom of the script for examples.
+
+Useful links:
+R project			http://www.r-project.org/
+R package ape			http://cran.r-project.org/web/packages/ape/
+ClusterPicker			http://code.google.com/p/cluster-picker-and-cluster-matcher/
+LeighBrown Group		http://hiv.bio.ed.ac.uk/index.html
+Rambaut Group			http://tree.bio.ed.ac.uk/
+BEAST				http://beast.bio.ed.ac.uk/Main_Page
+NCBI Influenza Virus Resource	http://www.ncbi.nlm.nih.gov/genomes/FLU/FLU.html
+
+Sam standard fasta defline for flu
+>{serotype}_{host}_{accession}_{strain}_{country}_{year}/{month}/{day}_{segname}
+
+-------------------------------------------
+# Rcode_utils is free software: you can redistribute it and/or modify it under the terms of the 
+# GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
+# Rcode_utils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+# See the GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License along with Rcode_utils.  
+# If not, see <http://www.gnu.org/licenses/>.
+-------------------------------------------
