@@ -16,17 +16,27 @@
 # 8  May   2013 - Cuckoo & abbreviations (mostly for HKU)
 # 9  May   2013 - CU = chukar
 # 5  Aug   2013 - african stonechat
-
-
-# Rcode_utils is free software: you can redistribute it and/or modify it under the terms of the 
-# GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
-# Rcode_utils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-# See the GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License along with Rcode_utils.  
-# If not, see <http://www.gnu.org/licenses/>.
-
-
+# 2  Dec   2013 - finch (pas)
+# 12 Feb   2014 - dove (col)
+# 11 Nov   2014 - from NS allele B work
+# 17 Nov   2014 - from NS allele B work
+# 22 Nov   2014 - H5N8 work, include Kurdistan in MiddleEast (parts are in Turkey & Iraq)
+# 27 Nov   2014 - un geoscheme
+# 15 Jan   2015 - crane (Gruiformes)
+# 20 Feb   2015 - anas_ = anseriformes (e.g. Anas_americana, Anas_discors)
+# 25 Mar   2015 - breeder_chicken = domestic
+# 12 June  2015 - Chinese francolin = galliformes
+# 23 June  2015 - black-legged kittywake = cha
+# 17 July  2015 - added option on unGeoScheme to return the full list
+# 20 July  2015 - horned puffin = cha
+# 13 Oct   2015 - Bahrain, Oman in middle east, Paraguay in South America
+# 15 Oct   2015 - WallisandFutuna, Yucatan
+# 13 Nov   2015 - Anthropoides virgo this is a crane (Gru)
+# 18 Nov   2015 - getLongShort
+# 18 Nov   2015 - added some more places to countryClass (note this is not exhaustive, just what req for seqs)
+# 25 Nov   2015 - Snowy Owl (stg)
+# 10 Feb   2016 - more countries and places (H5N8 work using GISAID)
+# 19 Feb   2016 - added more long range migrants for N5
 
 ######################################################################
 # function to classify birds in H5N1 - to bird order
@@ -50,6 +60,7 @@
 # Psi Psittaciformes	http://en.wikipedia.org/wiki/Parrot	Parrot
 # Rhe	Rheiformes	http://en.wikipedia.org/wiki/Rhea_(bird)	Rhea (looks like an emu)
 # Str	Struthioniformes	http://en.wikipedia.org/wiki/Ostrich	Ostrich, Emu
+# Sph	Sphenisciformes	http://en.wikipedia.org/wiki/Penguin	Penguin
 # Tin Tinamiformes	http://en.wikipedia.org/wiki/Red-winged_Tinamou Tinamou (Brazil)
 
 # birdNames is a vector
@@ -57,13 +68,21 @@
 # updated 25 Mar 2013
 # updated 26 April 2013
 # updated 9  May   2013
-
+# updated 12 Feb   2014
+# updated 11 Nov   2014
+# updated 22 Nov   2014 - Ch = chicken, Larus michahellis (yellow-legged gull) = cha
+# updated 20 Feb	 2015 - "anas_" = anseriformes (e.g. Anas_americana, Anas_discors)
+# updated 12 June 2015 - Chinese francolin = galliformes
+# updated 24 June 2015 - black-legged kittywake = cha
+# updated 20 July 2015 - horned puffin = cha
+# updated 13 Nov  2015 - Anthropoides virgo = gru
+# updated 25 Nov  2015 - Strigiformes = stg, Snowy Owl
 birdClass	<- function( birdNames ) {
 
 	birdNames	<- tolower(birdNames)
 
 	# nasty coding of ck for chicken messes up duck !!
-	inds		<- which((birdNames=="ck") | (birdNames=="chick"))
+	inds		<- which((birdNames=="ck") | (birdNames=="chick") | (birdNames=="ch") )
 	if (length(inds) > 0) {
 		birdNames[inds] <- "chicken"
 	}	
@@ -83,14 +102,22 @@ birdClass	<- function( birdNames ) {
 		birdNames[inds] <- "quail"
 	}
 
+	inds		<- which( (birdNames=="mllard") | (birdNames=="msllard") )
+	if (length(inds) > 0) {
+		birdNames[inds] <- "mallard"
+	}
 
 	# crowned gets synoned with crow - so remove all crowneds
-	inds		<- grep("crowned", birdNames)
-	if (length(inds) > 0) {
-		for (i in 1:length(inds)) {
-			birdNames[inds[i]] = sub("crowned", "", birdNames[inds[i]])
-		}
-	}
+
+	#inds		<- grep("crowned", birdNames)
+	#if (length(inds) > 0) {
+	#	for (i in 1:length(inds)) {
+	#		birdNames[inds[i]] = sub("crowned", "", birdNames[inds[i]])
+	#		}
+	#}
+
+	# quicker ! not that it matters terribly much, but still
+	birdNames <- gsub("crowned", "", birdNames)
 
 	birdOrders	<- array("-", length(birdNames))
 
@@ -102,28 +129,35 @@ birdClass	<- function( birdNames ) {
 			"plathyrhynchos","shoveler","aquatic bird","aquaticbird",
 			"widgeon","bufflehead","eider","scoter","redhead","water fowl","watercock","anas acuta",
 			"greater scaup","mergus albellus","smew",
-			"canvasback","hooded merganser","lesser scaup","northern shoverl","brant")
+			"canvasback","hooded merganser","lesser scaup","northern shoverl","brant",
+			"anas angustirostris","anas querquedula","ruddy sheldrake","scaup",
+			"anas_","anas ","anser fabalis","shoveller","tadorna","aythya fuligula","dendrocygna viduata")
 
-	cic	<- c("stork","condor")
+	cic	<- c("stork","condor","open-billed ibis","ibis")
 
 	cor	<- c("rollers")
 
-	col	<- c("peaceful dove","rock dove")
+	col	<- c("peaceful dove","rock dove", "dove")
 
 	cha	<- c("shorebird","gull","tern","turnstone","dunlin","sandpiper","sanderling",
 			"red knot","redknot","knot","plover","red-necked stint","redneckedstint","curlew",
-			"rufous-necked stint","black-legged kittiwake","common murre",
-			"arenaria interpres","thick-billed murre","arenaria-interpres", "eurasian woodcock")
+			"rufous-necked stint","black-legged kittiwake","common murre","murre",
+			"arenaria interpres","thick-billed murre","arenaria-interpres",
+			"eurasian woodcock","lapwing","oystercatcher","common snipe","snipe",
+			"guillemot","larus argentatus","razorbill","larus michahellis","yellow-legged gull",
+			"larus","bar-tailed godwit","black-legged kittywake","horned puffin","puffin",
+			"common redshank")
 
 	cuc	<- c("cuckoo")
 
 	gal	<- c("chicken","pheasant","quail","turkey","sck","guinea","guineafowl","guinea_fowl",
 			"chukar","bustard","peacock","peahen","peafowl","partridge",
-			"poultry","chukkar","chukka")
+			"poultry","chukkar","chukka","silky fowl","bantam","rooster","numida meleagris",
+			"chinese francolin")
 
-	gru	<- c("coot","moorhen","hooded crane","black-neck crane")
+	gru	<- c("coot","moorhen","hooded crane","black-neck crane","crane","anthropoides virgo")
 
-	fal	<- c("falcon","kestrel","peregrine","harrier","owl")
+	fal	<- c("falcon","kestrel","peregrine","harrier","owl","eurasian eagel owl")
 
 	pas	<- c("sparrow","crow","magpie","pigeon","blackbird","myna",
 			"starling","wild bird","wildbird","shrike","robin","softbill",
@@ -131,15 +165,20 @@ birdClass	<- function( birdNames ) {
 			"fairy bluebird","fairybluebird","rook",
 			"babbler","black bulbul","golden mountain thrush",
 			"japanese white-eye","silver-eared mesia","brambling","chinese hwamei",
-			"african stonechat")
+			"african stonechat","finch","raven","barn swallow","barnswallow",
+			"alder flycatcher","black-headed weaver","scaly thrush","campylorhamphus pucherani")
 
-	psi	<- c("parrot","conure","parakeet","psittacine","macaw")
+	psi	<- c("parrot","conure","parakeet","psittacine","macaw","yellow-headed amazon","budgerigar")
 
 	pro	<- c("shearwater")	
 	
 	rhe	<- c("rhea")
 
 	str	<- c("ostrich","emu")
+
+	sph	<- c("penguin")
+
+	stg	<- c("snowy owl","snowy_owl","snowyowl")
 
 	tin	<- c("red-winged tinamou", "redwingedtinamou")
 
@@ -149,7 +188,7 @@ birdClass	<- function( birdNames ) {
 
 	orders <- list(	acc=acc,ans=ans,cic=cic,cor=cor,col=col,
 				cha=cha,cuc=cuc,gru=gru,gal=gal,fal=fal,
-				pas=pas,pel=pel,pro=pro,pic=pic,rhe=rhe,str=str,psi=psi,tin=tin)
+				pas=pas,pel=pel,pro=pro,pic=pic,rhe=rhe,str=str,sph=sph,stg=stg,psi=psi,tin=tin)
 
 	for (i in 1:length(orders)) {
 		oo	<- unlist(orders[i])
@@ -189,12 +228,16 @@ birdClass	<- function( birdNames ) {
 # Chinese spotbill (Anas poecilohyncha). 
 # These wild ducks (excluding the resident mallard and Chinese spotbill ducks) ..
 
+# updates 17 nov 2014
+# updates 22 nov 2014 - Ch = chicken
+# updates 25 mar 2015 - breeder_chicken => domestic
 getWildDomestic <- function( bird ) {
 	bird2			<- tolower(bird)
 	bird2			<- gsub(" ","_",bird2)			# 2 Sept 2013
 
 	wildDomestic	<- array("Wild", length(bird2))
 	inds			<- which( 	(bird2=="ck") | 
+					(bird2=="ch") |
 					(bird2=="chicken") | 
 					(bird2=="guinea_fowl") | 
 					(bird2=="guineafowl") |
@@ -202,6 +245,9 @@ getWildDomestic <- function( bird ) {
 					(bird2=="silky_chicken") |
 					(bird2=="silkie_chicken") |
 					(bird2=="silkie") |
+					(bird2=="silky_fowl") |
+					(bird2=="fowl") |
+					(bird2=="poultry") |
 					(bird2=="quail") |
 					(bird2=="gs") |
 					(bird2=="goose") |
@@ -213,7 +259,12 @@ getWildDomestic <- function( bird ) {
 					(bird2=="Gf") |
 					(bird2=="turkey") |
 					(bird2=="village_chicken") |
-					(bird2=="muscovy_duck") )
+					(bird2=="muscovy_duck") | 
+					(bird2=="bantam") |
+					(bird2=="breeder_duck") |
+				      (bird2=="broiler_duck") |
+					(bird2=="rooster") |
+					(bird2=="breeder_chicken") )
 
 	wildDomestic[inds] <- "Domestic"
 	inds			 <- which(bird2=="mammal")
@@ -242,6 +293,61 @@ unabbreviatedBird <- function( bird ) {
 	return( ubird )
 }
 
+# function to classify birds into long-range or short-range (or sedentary) species
+# really only applicable for the wild birds anseriformes, so should run getWildDomestic first
+# 18 nov 2015
+
+getLongShort <- function( bird ) {
+
+#Dear Sam, 
+#for your information:
+#- the "large" distance migratory birds in which HPAI H5N8 virus was detected in Korea/Japan are: baikal teal, bean goose, greater white fronted goose, tundra swan, common teal
+#- the "large" distance migratory birds in which HPAI H5N8 virus was detected in Europe are: Eurasian wigeon, common teal
+#- the "large" distance migratory birds in which HPAI H5N8/2 virus was detected in the US are: American green-winged teal, northern pintail, American wigeon
+#Please let me know if you need additional information.
+#Best regards, Rogier
+
+	long <- c(	"baikal teal",
+			"bean goose",
+			"greater white fronted goose",
+			"tundra swan",
+			"eurasian wigeon",
+			"common teal",
+			"american green-winged teal",
+			"northern pintail",
+			"american wigeon",
+			"wigeon",
+			"white fronted goose",
+			"anas crecca" )
+
+	# 1 feb 2016 - SJL added due to more USA sequences in larger data set (seg6)
+	long <- c(long,"blue-winged teal","snow goose","green-winged teal")
+
+	# 19 feb 2016 - SJL added due to more sequences in N5 data set (seg6)
+	long <- c(long,"bewicks swan","greylag goose","migratory duck")
+
+	# 21 feb 2016 - SJL widgeon is same as wigeon
+	long <- c(long, "widgeon")
+
+
+	long2		<- gsub(" ","",long)
+	long2		<- gsub("-","",long2)
+
+	bird2		<- gsub(" ","",bird)
+	bird2		<- gsub("_","",bird2)
+	bird2		<- gsub("-","",bird2)
+	bird2		<- tolower(bird2)
+
+	minds		<- match(bird2,long2)
+	jj		<- which(is.finite(minds))
+	all( bird2[jj] == long2[minds[jj]] )
+	mig		<- array("Short",length(bird2))
+	mig[jj] 	<- "Long"
+
+	return( mig )
+}
+
+
 #####################################################################################################
 # function to classify countries to continents
 
@@ -254,44 +360,63 @@ unabbreviatedBird <- function( bird ) {
 # updated 9  Jul 2012
 # updated 5  Dec 2012
 # updated 25 Mar 2013
-continentClass	<- function( countries ) {
+# updated 17 Nov 2014
+# updated 22 Nov 2014
+# updated 26 Nov 2014 - scale="main" => 7 continents, scale="sub" => finer scale
+
+continentClass	<- function( countries, scale="main" ) {
 	Europe		<- c(	"UK","France","Austria","Belgium","Bolivia","CzechRepublic","Denmark","Estonia",
 					"Germany","Greece","Italy","Luxembourg","Netherlands",
 					"Norway","Poland","Turkey","Spain","Serbia",
 					"UnitedKingdom","Ireland","Hungary","Sweden","Portugal",
 					"Slovenia","Croatia","Herzegovina", "Bulgaria",
-					"Switzerland","BosniaandHerzegovina","Slovakia","Finland","Iceland")
+					"Switzerland","BosniaandHerzegovina","Slovakia","Finland","Iceland",
+					"Romania")
 
 	NorthAmerica	<- c("USA","Canada","Mexico")
 	CentralAmerica	<- c("ElSalvador","Nicaragua","Haiti","DominicanRepublic",
-					"Guatemala","Panama","PuertoRico")
+					"Guatemala","Panama","PuertoRico","Cuba","Barbados","TrinidadandTobago")
 
-	SouthAmerica	<- c("Chile","Colombia","Argentina","Ecuador","Peru","Brazil","Uruguay")
+	SouthAmerica	<- c("Chile","Colombia","Argentina","Ecuador","Peru","Brazil","Uruguay","Venezuela","Paraguay")
 
 	Africa		<- c("Ethiopia","Nigeria","Mali","Senegal","Djibouti",
 					"Africa","Sudan","Egypt","BurkinaFaso", "Niger", "Kenya",
-					"IvoryCoast", "CotedIvoire", "Zambia", "SouthAfrica","Ghana")
+					"IvoryCoast", "CotedIvoire", "Zambia", "SouthAfrica","Ghana","Uganda",
+					"Morocco","Tunisia","Togo","Cameroon","Algeria", "Benin","Libya")
 
 	Asia			<- c("India","Malaysia","HongKong","Hong_Kong","China","Singapore","SouthKorea","Thailand","Japan",
 					"Cambodia","Taiwan","Myanmar","VietNam","Viet_Nam","Vietnam","Pakistan",
 					"Bangladesh","Bhutan", "Indonesia", "Laos","Korea","Malaya",
-					"Nepal","Philippines")
+					"Nepal","Philippines","SriLanka","NorthKorea")
 
-	Oceania		<- c("Australia","NewZealand","New_Zealand","Guam","NewCaledonia")
+	Oceania		<- c("Australia","NewZealand","New_Zealand","Guam","NewCaledonia","Tonga","Fiji")
 
 	MiddleEast		<- c("Jordan","Israel","Afghanistan","Arabia",
 					"Kuwait","GazaStrip", "Iran", "Iraq", "SaudiArabia", "Lebanon",
-					"UnitedArabEmirates","Qatar")
+					"UnitedArabEmirates","Qatar","Azerbaijan","MiddleEast","Kurdistan","PalestinianTerritory","Bahrain","Oman")
 
-	CentralAsia		<- c(	"Kyrgyzstan","Turkmenistan","Russia",
+	CentralAsia		<- c(	"Kyrgyzstan","Turkmenistan","Russia","USSR",
 					"Mongolia","Kazakhstan","Ukraine","Uzbekistan",
 					"Georgia","Crimea")
 
+	Antarctica		<- c("Antarctica")
+
 	continents		<- array("-", length(countries))
 
-	conts			<- list( 	Europe=Europe, NorthAmerica=NorthAmerica,
+	if (scale=="main") {
+		conts			<- list( 	Europe=Europe, NorthAmerica=NorthAmerica,
 						SouthAmerica=c(CentralAmerica,SouthAmerica),
-						Africa=Africa, Oceania=Oceania, Asia=c(Asia,CentralAsia,MiddleEast) )
+						Africa=Africa, Oceania=Oceania, 
+						Asia=c(Asia,CentralAsia,MiddleEast),
+						Antarctica=Antarctica )
+
+	} else {
+		conts			<- list( Europe=Europe, NorthAmerica=NorthAmerica,
+						   SouthAmerica=SouthAmerica, CentralAmeria=CentralAmerica,
+						   Africa=Africa, Oceania=Oceania,
+						   Asia=Asia, CentralAsia=CentralAsia, MiddleEast=MiddleEast,
+						   Antarctica=Antarctica )
+	}
 
 	for (i in 1:length(conts)) {
 		oo 	<- unlist(conts[i])
@@ -320,18 +445,21 @@ countryClass	<- function( places ) {
 			"North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania",
 			"Rhode Island","South Carolina","South Dakota","Tennessee",
 			"Texas","Utah","Vermont","Virginia",
-			"Washington","West Virginia","Wisconsin","Wyoming","Delaware Bay")
+			"Washington","West Virginia","Wisconsin","Wyoming","Delaware Bay",
+			"Interior_Alaska","Interior Alaska","Southcentral_Alaska","Southcentral Alaska","South Central Alaska")
 	Usa2  <- gsub(" ", "_", USA)
 	Usa3	<- gsub(" ", "", USA)
 	Usa4  <- c("CA","DE","Memphis","MN","NJ","NY","LA")
 	USA   <- sort(unique(c(USA,Usa2,Usa3,Usa4)))
 
+	Mexico <- c("Jalisco")
+
 	Canada <- c("Ontario","Quebec","Nova Scotia","New Brunswick",
 			"Manitoba","British Columbia","Prince Edward Island","Saskatchewan",
-			"Alberta","Newfoundland and Labrador","Newfoundland","Labrador")
+			"Alberta","Newfoundland and Labrador","Newfoundland","Labrador","Edmonton")
 	Canada2<- gsub(" ", "_", Canada)
 	Canada3<- gsub(" ", "", Canada)
-	Canada4<- c("ALB")
+	Canada4<- c("ALB","BC")
 	Canada <- sort(unique(c(Canada,Canada2,Canada3,Canada4)))
 
 	Thailand <- c(	"Bangkok","Kanchanaburi","Nakhon Si Thammarat Province","Phra Nakhon Si Ayutthaya","Satun",
@@ -373,27 +501,40 @@ countryClass	<- function( places ) {
 			"Nanchang","Nanjing","Qianzhou","Anyang","Guiyang","Hongze","Huadong","Jiawang",
 			"Shantou","Shenzhen","Shijiazhuang","Shuanggou","Taixing","Taizhou","Tongshan",
 			"Wuxi","Xianghai","Xiangshui","Xigou","Xuzhou","Yangzhou","Yongcheng","ZhaLong","Dawang","Zibo",
-			"jiyuan","Kaifeng","Qixian","Zhuhai","Hangzhou","Wenzhou","Zhangzhou","Guangzhou","Kuming")
+			"jiyuan","Kaifeng","Qixian","Zhuhai","Hangzhou","Wenzhou","Zhangzhou","Guangzhou","Kuming",
+			"Dongting","Eastern_China","EasternChina")
 
-	Japan <- c("Kinai","Tokaido","Tosando","Hokurikudo","Sanindo","Sanyodo","Nankaido","Hokkaido",
-			"Osaka","Kobe","Yokohama","Akita","Aomori","Chiba","Miyagi","Shiga","Shimane","Tsukuba")
+	Japan <- c("Kinai","Tokaido","Tosando","Hokurikudo","Sanindo","Sanyodo","Nankaido","Hokkaido","Kumamoto","Miyazaki","Yamagata",
+			"Yamaguchi","Osaka","Kobe","Yokohama","Akita","Aomori","Chiba","Miyagi","Shiga","Shimane","Tsukuba","Kagoshima")
 
 	Korea <- c("Geumgang","Nakdonggang","Seongdong","Shihwa","Hadoree")
+
+	Vietnam <- c("Quang_Ninh","QuangNinh","Quanh_Ninh","Ninh_Binh","Nam_Dinh","Mong_Cai","Ha_Tay","Ca_Mau","Hanoi","Soc_Trang","Nha_Trang")
+	Vietnam2 <- gsub("_"," ",Vietnam)
+	Vietnam3 <- gsub("_","",Vietnam)
+	Vietnam  <- sort(unique(c(Vietnam,Vietnam2,Vietnam3)))
+
+	Myanmar <- c("Hmawbi","Thanatpin")
+
+	Kazakhstan <- c("Aktau")
 
 	Australia <- c("Victoria","Western Australia","South Australia","Queensland","New South Wales")
 	Australia2<- gsub(" ","_",Australia)
 	Australia3<- gsub(" ", "", Australia)
 	Australia <- sort(unique(c(Australia,Australia2,Australia3)))
 
-	Russia <- c("Astrakhan","Neimonggu","Primorie","Altai","Gurjev","Siberia")
+	Russia <- c("Astrakhan","Neimonggu","Primorie","Altai","Gurjev","Siberia","Sakha","Buryatiya","Chabarovsk","Burjatia")
 
-	Germany <- c("Rugen","Berlin","Heinersdorf","Potsdam")
+	Germany <- c("Rugen","Berlin","Heinersdorf","Potsdam","Germany-MV","Germany-NI","Stralsund","Bavaria","Germany-RP")
+
+	UnitedKingdom	<- c("England","Scotland")
 
 	countries		<- array("-", length(places))
 
-	conts			<- list( USA=USA, Canada=Canada, China=China, Japan=Japan, Thailand=Thailand,
-					   Indonesia=Indonesia, Korea=Korea,
-					   Russia=Russia, Australia=Australia, Germany=Germany )
+	conts			<- list( USA=USA, Canada=Canada, Mexico=Mexico, China=China, Japan=Japan, Thailand=Thailand,
+					   Indonesia=Indonesia, Korea=Korea, Vietnam=Vietnam, Myanmar=Myanmar,
+						Japan=Japan, Kazakhstan=Kazakhstan,
+					   	Russia=Russia, Australia=Australia, Germany=Germany, UnitedKingdom=UnitedKingdom )
 
 	for (i in 1:length(conts)) {
 		oo 	<- unlist(conts[i])
@@ -414,7 +555,7 @@ countryClass	<- function( places ) {
 }
 
 
-isProvinceOfChina	<- function( place ) {
+isProvinceOfChina	<- function( place, return.places=FALSE ) {
 
 	provinces <- c(	"Beijing","Tianjin","Hebei","Shanxi",
 				"Mongolia","Liaoning","Jilin","Heilongjiang",
@@ -426,7 +567,7 @@ isProvinceOfChina	<- function( place ) {
 				"Shaanxi","Gansu","Qinghai","Ningxia",
 				"Xinjiang","HongKong","Xianggang",
 				"Macau","Aomen","Taiwan")
-	provinces 	<- tolower(provinces)
+	#provinces 	<- tolower(provinces)
 
 	place2 	<- tolower(place)
 	place2	<- gsub("_", "", place2)
@@ -434,49 +575,74 @@ isProvinceOfChina	<- function( place ) {
 	place2	<- gsub("-", "", place2)
 	
 	if (length(place2) > 1) {
-		inds		<- match(place2, provinces)
-		jj		<- which(is.finite(inds))
+		minds		<- match(place2, tolower(provinces))
+		jj		<- which(is.finite(minds))
 		inds		<- array(FALSE, length(place2))
 		inds[jj]	<- TRUE
-		return( inds )
+
+		if (return.places) {
+			res 	  <- array("-",length(place))
+			res[jj] <- provinces[minds[jj]]
+			return ( res )
+		} else {
+			return( inds )
+		}
 	} else {
-		inds		<- which(provinces==place2)
+		inds		<- which(tolower(provinces)==place2)
 		return ( length(inds) == 1 )
 	}
 }
 
 
 # 2 Sept 2013 - updated
+# 12 Feb 2014 - updated
+# 8 Dec 2014  - updated
+# 8 May 2015 - updated
+# 4 Feb 2016 - updated
+# 25 Mar 2016 - updated
 getProvinceOfChina <- function( places ) {
 	pc 		<- isProvinceOfChina( places )
 
-	Guizhou 	<- c("Guiyang")
-	Zhejiang	<- c("Hangzhou","Huadong","Wenzhou")
+	Anhui		<- c("Anhui","Chuzhou","Shitai")
+	Guizhou 	<- c("Guiyang","Gui_Yang")
+	Zhejiang	<- c("Hangzhou","Huadong","Wenzhou","Shaoxing","Ningbo","Huzhou","Jiaxing")
 	HongKong	<- c("HK","Hong_Kong")
+
 	Jiangsu 	<- c(	"Jiawang","Nanjing","Qianzhou",
 				"Taixing","Taizhou","Tongshan","Wuxi","Xiangshui","Xuzhou","Hongze",
-				"Yangzhou","Shuanggou","Xigou","Xuyi","Suzhou")		# not sure about Shuanggou or Xigou
-	Jiangxi 	<- c("Nanchang")
-	Henan	  	<- c("Kaifeng","Qixian","Yongcheng")		# not sure about Qixian
+				"Yangzhou","Shuanggou","Xigou","Xuyi","Suzhou","Changzhou","Sheyang","Yanchen","Yan_chen","Suzhou")		# not sure about Shuanggou or Xigou
+
+	Jiangxi 	<- c("Nanchang","Zhenjiang")
+	Henan	  	<- c("Kaifeng","Qixian","Yongcheng","Shangqiu","Xuchang","Anyang")		# not sure about Qixian
 	Yunnan  	<- c("Kuming","Kunming")
-	Guangdong 	<- c("Shantou","Zhuhai","Shenzhen")
+	Guangdong 	<- c("Shantou","Zhuhai","Shenzhen","Guangzhou","Huizhou","Dongguan")
 	Hebei		<- c("Shijiazhuang")
+	Hubei		<- c("Chibi","Wuhan")
 	Shanghai	<- c("Xianghai")
 	Fujian	<- c("Zhangzhou")
-	Shandong	<- c("Zibo","Rizhao")
+	Shandong	<- c("Zibo","Rizhao","Qingdao","Yantai","Jinan","Laiwu","Chiping")
 	Shaanxi	<- c("Dawang")
-	Guangxi	<- c("SanJiang")						# sure sure about SanJiang
-	Heilongjiang<- c("ZhaLong")
-	Hunan		<- c("Donting","Dongting")
+	Guangxi	<- c("SanJiang","Sanjiang","San_Jiang")				# not sure about SanJiang
+	Heilongjiang<- c("ZhaLong","Mudanjiang")
 
-	provinces	<- list( Guizhou=Guizhou, Zhejiang=Zhejiang, HongKong=HongKong,
+	Hunan		<- c("Donting","Dongting","Dongting_Lake","Dongting Lake","DongtingLake",
+				"Changsha","Lengshuitan","HN")	# HN is from A/Dk/HN/5806/2003 - checked in paper
+
+	Mongolia	<- c("Neimeng","Neimonggu","Neimenggu")		# not completely sure about these
+	Liaoning	<- c("Shenyan","Sheny")					# just guessing Sheny==Shenyan
+	Sichuan	<- c("Juxian")
+	Gansu		<- c("Sunan")
+
+	provinces	<- list( Anhui=Anhui, Guizhou=Guizhou, Zhejiang=Zhejiang, HongKong=HongKong,
 				   Jiangsu=Jiangsu, Jiangxi=Jiangxi, Henan=Henan, Yunnan=Yunnan,
-				   Guangdong=Guangdong, Hebei=Hebei, Shanghai=Shanghai, Fujian=Fujian,
+				   Guangdong=Guangdong, Hebei=Hebei, Hubei=Hubei, Shanghai=Shanghai, Fujian=Fujian,
 				   Shandong=Shandong, Shaanxi=Shaanxi, 
-				   Guangxi=Guangxi, Heilongjiang=Heilongjiang, Hunan=Hunan )
+				   Guangxi=Guangxi, Heilongjiang=Heilongjiang, Hunan=Hunan,
+				   Mongolia=Mongolia, Liaoning=Liaoning, Sichuan=Sichuan, Gansu=Gansu )
 
 	provs			 <- array("-", length(places))
-	provs[ which(pc) ] <- places[ which(pc) ]
+	#provs[ which(pc) ] <- places[ which(pc) ]
+	provs[ which(pc) ] <-  isProvinceOfChina( places[ which(pc) ], return.places=TRUE )
 	for (i in 1:length(provinces)) {
 		oo 	<- unlist(provinces[i])
 		
@@ -491,6 +657,428 @@ getProvinceOfChina <- function( places ) {
 	return( provs )
 
 }
+
+USA_state_abbrev <- function( names, type="toState",
+					fname = "usa_state_abbreviations_nov_2014.txt", 
+					path = "//ris-fas1a.roslin.ed.ac.uk//slycett2//Rcode//") {
+
+	#names <- gsub("Interior_Alaska","Alaska",names)
+	#names <- gsub("Interior Alaska","Alaska",names)
+	#names <- gsub("Southcentral_Alaska","Alaska",names)
+	#names <- gsub("Southcentral Alaska","Alaska",names)
+	names <- gsub("Barrow","Alaska",names)
+	names <- gsub("Delaware Bay","Delaware",names)
+	names <- gsub("Delaware_Bay","Delaware",names)
+
+	ainds <- grep("Alaska",names)
+	if ( length(ainds) > 0 ) {
+		names[ainds] <- "Alaska"
+	}
+
+	if (type=="toState") {
+		k <- 1
+	} else {
+		k <- 2
+	}
+
+	tbl <- read.table( paste(path,fname,sep=""), header=TRUE, sep="\t")
+
+	minds1 <- match(gsub("[ _]","",names), gsub(" ","",paste(tbl[,1]) ) )
+	minds2 <- match(names,tbl[,2])
+
+	states <- array("-",length(names))
+
+	jj1	 <- which(is.finite(minds1))
+	if ( length(jj1) > 0 ) {
+		states[jj1] <- paste(tbl[minds1[jj1],k])
+	}	
+
+	jj2	 <- which(is.finite(minds2))
+	if (length(jj2) > 0) {
+		states[jj2] <- paste(tbl[minds2[jj2],k])
+	}
+
+	return( states )
+}
+
+Canada_state_abbrev <- function( names, type="toState",
+						fname = "canada_state_abbreviations_nov_2014.txt",
+						path = "//ris-fas1a.roslin.ed.ac.uk//slycett2//Rcode//") {
+
+	names <- gsub("StJohns","Newfoundland and Labrador",names,fixed=TRUE)
+	inds	<- which(names=="ALB")
+	if (length(inds) > 0) {
+		names[inds] <- "Alberta"
+	}
+	names <- gsub("Nunavet","Nunavut",names)
+
+	if (type=="toState") {
+		k <- 1
+	} else {
+		k <- 2
+	}
+
+	tbl <- as.matrix(read.table( paste(path,fname,sep=""), header=TRUE, sep="\t"))
+
+	minds1 <- match(gsub("[ _]","",names), gsub(" ","",paste(tbl[,1]) ) )
+	minds2 <- match(names,tbl[,2])
+
+	states <- array("-",length(names))
+
+	jj1	 <- which(is.finite(minds1))
+	if ( length(jj1) > 0 ) {
+		states[jj1] <- paste(tbl[minds1[jj1],k])
+	}	
+
+	jj2	 <- which(is.finite(minds2))
+	if (length(jj2) > 0) {
+		states[jj2] <- paste(tbl[minds2[jj2],k])
+	}
+
+	return( states )
+}
+
+
+
+
+
+
+# this is like continentClass, but uses UN GeoScheme
+
+# WARNING ONLY FOR EUROPE, ASIA, AFRICA, AMERICA AT THE MOMENT (8 Dec 2014)
+# http://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Asia
+# http://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Europe
+# http://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Africa
+# http://en.wikipedia.org/wiki/United_Nations_geoscheme_for_the_Americas
+# http://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Oceania
+# http://millenniumindicators.un.org/unsd/methods/m49/m49regin.htm
+# 17 july 2015 - added option to just return the entire list
+unGeoScheme <- function( countries, getFullList=FALSE ) {
+
+	CentralAsia <- c(		"Kazakhstan",
+    					"Kyrgyzstan",
+    					"Tajikistan",
+    					"Turkmenistan",
+    					"Uzbekistan" )
+
+
+	EasternAsia	<- c(		"China","Hong Kong","Macau",
+					"Korea","South Korea","North Korea",
+					"Japan",
+    					"Mongolia",
+    					"Taiwan" ) 
+
+
+	SouthernAsia <- c(	"Afghanistan",
+				    	"Bangladesh",
+					"Bhutan",
+					"India",
+					"Iran",
+					"Maldives",
+					"Nepal",
+					"Pakistan",
+					"Sri Lanka" )
+
+
+	SouthEasternAsia <- c(  "Brunei Darussalam","Brunei",
+					"Cambodia",
+					"Indonesia",
+					"Lao","Laos",
+					"Malaysia",
+					"Myanmar","Burma",
+					"Philippines",
+					"Singapore",
+					"Thailand",
+					"Timor-Leste","Timor","East Timor",
+					"Viet Nam" )
+
+
+	WesternAsia		<- c(	"Armenia",
+					"Azerbaijan",
+    					"Bahrain",
+    					"Cyprus",
+    					"Georgia","Republic of Georgia",
+    					"Iraq",
+    					"Israel",
+    					"Jordan",
+    					"Kuwait",
+    					"Lebanon",
+    					"Oman",
+    					"Qatar",
+    					"Saudi Arabia",
+    					"State of Palestine","PalestinianTerritory","GazaStrip","Gaza","Gaza Strip","PAR",
+    					"Syrian Arab Republic","Syria","MiddleEast",
+    					"Turkey",
+    					"United Arab Emirates",
+    					"Yemen" )
+
+
+	EasternEurope	<- c(	"Belarus",
+					"Bulgaria",
+    					"Czech Republic",
+    					"Hungary",
+    					"Poland",
+    					"Republic of Moldova","Moldova",
+    					"Romania",
+    					"Russian Federation","Russia","USSR",
+					"Ukraine",
+    					"Slovakia")
+
+	NorthernEurope	<- c( "Aland Islands",
+    					"Denmark",
+    					"Estonia",
+    					"Faroe Islands",
+    					"Finland",
+    					"Guernsey",
+    					"Iceland",
+    					"Ireland","Eire","Northern Ireland",
+    					"Isle of Man",
+    					"Jersey",
+    					"Latvia",
+    					"Lithuania",
+    					"Norway",
+    					"Sark",
+    					"Svalbard and Jan Mayen Islands","Svalbard",
+    					"Sweden",
+    					"United Kingdom","UK","GB","Great Britain")
+
+
+	SouthernEurope	<- c(	"Albania",
+    					"Andorra",
+    					"Bosnia and Herzegovina",
+    					"Croatia",
+    					"Cyprus",
+    					"Gibraltar",
+    					"Greece",
+    					"Holy See",
+    					"Italy",
+    					"Malta",
+    					"Montenegro",
+    					"Portugal",
+    					"San Marino",
+    					"Serbia","Kosovo",
+    					"Slovenia",
+    					"Spain",
+    					"The former Yugoslav Republic of Macedonia","Macedonia","Yugoslavia")
+
+	WesternEurope	<- c(	"Austria",
+    					"Belgium",
+    					"France",
+    					"Germany",
+    					"Liechtenstein",
+    					"Luxembourg",
+    					"Monaco",
+    					"Netherlands",
+    					"Switzerland" )
+
+
+	EasternAfrica	<- c(	"Burundi",
+    					"Comoros",
+    					"Djibouti",
+    					"Eritrea",
+    					"Ethiopia",
+					"Kenya",
+    					"Madagascar",
+    					"Malawi",
+    					"Mauritius",
+    					"Mayotte",
+					"Mozambique",
+    					"Reunion",
+    					"Rwanda",
+    					"Seychelles",
+    					"Somalia",
+					"South Sudan",
+    					"Uganda",
+    					"United Republic of Tanzania","Tanzania",
+    					"Zambia",
+    					"Zimbabwe" )
+
+	CentralAfrica <- c(	"Angola",
+    					"Cameroon",
+    					"Central African Republic",
+    					"Chad",
+					"Democratic Republic of the Congo","Congo","DRC",
+    					"Equatorial Guinea",
+    					"Gabon",
+    					"Republic of the Congo",
+    					"Sao Tome and Príncipe","Sao Tome" )
+
+
+	NorthernAfrica <- c(	"Algeria",
+					"Egypt",
+    					"Libya",
+    					"Morocco",
+					"Sudan",
+    					"Tunisia",
+					"Western Sahara" )
+
+	SouthernAfrica <- c(    "Botswana",
+    					"Lesotho",
+    					"Namibia",
+    					"South Africa",
+    					"Swaziland" )
+
+	WesternAfrica <- c(    	"Benin",
+    					"Burkina Faso",
+    					"Cape Verde",
+    					"Cote d'Ivoire","Cote dIvoire","Ivory Coast",
+    					"Gambia",
+    					"Ghana",
+    					"Guinea",
+    					"Guinea-Bissau",
+    					"Liberia",
+    					"Mali",
+    					"Mauritania",
+    					"Niger",
+    					"Nigeria",
+    					"Saint Helena",
+    					"Senegal",
+    					"Sierra Leone",
+   		 			"Togo" )
+
+
+
+	CaribbeanAmerica <- c(	"Anguilla",
+    					"Antigua and Barbuda","Antigua","Barbuda",
+    					"Aruba",
+    					"The Bahamas","Bahamas",
+    					"Barbados",
+    					"Bonaire",
+					"Sint Eustatius","Sint Eustatius and Saba","Saba",
+    					"British Virgin Islands","Virgin Islands",
+    					"Cayman Islands",
+    					"Cuba",
+    					"Curacao",
+    					"Dominica",
+    					"Dominican Republic",
+    					"Grenada",
+    					"Guadeloupe",
+    					"Haiti",
+    					"Jamaica",
+    					"Martinique",
+    					"Montserrat",
+    					"Puerto Rico",
+    					"Saint Barthelemy",
+    					"Saint Kitts and Nevis","Saint Kitts","Nevis",
+    					"Saint Lucia",
+    					"Collectivity of Saint Martin","Saint Martin",
+    					"Saint Vincent and the Grenadines","Saint Vincent","Grenadines",
+    					"Sint Maarten",
+    					"Trinidad and Tobago","Trinidad","Tobago",
+    					"Turks and Caicos Islands",
+    					"United States Virgin Islands" )
+
+	CentralAmerica <- c(	"Belize",
+    					"Costa Rica",
+    					"El Salvador",
+    					"Guatemala",
+    					"Honduras",
+    					"Mexico","Yucatan",
+    					"Nicaragua",
+    					"Panama" )
+
+	SouthernAmerica <- c(	"Argentina",
+    					"Bolivia",
+    					"Brazil",
+    					"Chile",
+    					"Colombia",
+    					"Ecuador",
+    					"Falkland Islands","Malvinas",
+    					"French Guiana",
+    					"Guyana",
+    					"Paraguay",
+					"Peru",
+    					"Suriname",
+    					"Uruguay",
+    					"Venezuela" )
+	# note it says SouthAmerica not SouthernAmerica, not sure which is right
+
+	NorthernAmerica <- c(	"Bermuda",
+    					"Canada",
+    					"Greenland",
+    					"Saint Pierre and Miquelon","Saint Pierre","Miquelon",
+    					"United States of America","USA","United States" )
+
+
+	AustraliaNewZealandOceania <- c(	"Australia",
+							"New Zealand",
+							"Norfolk Island")
+
+
+	MelanesiaOceania <- c(	"Fiji",
+					"New Caledonia",
+    					"Papua New Guinea",
+    					"Solomon Islands",
+    					"Vanuatu" )
+
+	MicronesiaOceania <- c(	"Guam",
+    					"Kiribati",
+    					"Marshall Islands",
+    					"Micronesia","Federated States of Micronesia",
+    					"Nauru",
+    					"Northern Mariana Islands",
+    					"Palau" )
+
+	PolynesiaOceania <- c(	"American Samoa","Samoa",
+    					"Cook Islands",
+    					"French Polynesia","Polynesia",
+    					"Niue",
+    					"Pitcairn",
+    					"Tokelau",
+    					"Tonga",
+    					"Tuvalu",
+    					"Wallis and Futuna Islands","WallisandFutuna" )
+
+
+	Antarctica	<- c("Antarctica")
+
+
+	continents		<- array("-", length(countries))
+
+	conts			<- list( 	CentralAsia=CentralAsia, EasternAsia=EasternAsia, SouthernAsia=SouthernAsia,
+						SouthEasternAsia=SouthEasternAsia, WesternAsia=WesternAsia,
+						EasternEurope=EasternEurope, WesternEurope=WesternEurope, 
+						SouthernEurope=SouthernEurope, NorthernEurope=NorthernEurope,
+						EasternAfrica=EasternAfrica, CentralAfrica=CentralAfrica,
+						SouthernAfrica=SouthernAfrica, WesternAfrica=WesternAfrica,
+						NorthernAfrica=NorthernAfrica,
+						CaribbeanAmerica=CaribbeanAmerica, CentralAmerica=CentralAmerica,
+						SouthernAmerica=SouthernAmerica, NorthernAmerica=NorthernAmerica,
+						AustraliaNewZealandOceania=AustraliaNewZealandOceania,
+						MelanesiaOceania=MelanesiaOceania, MicronesiaOceania=MicronesiaOceania,
+						PolynesiaOceania=PolynesiaOceania,
+						Antarctica=Antarctica )
+
+  if (getFullList) {
+	return( conts )
+  } else {
+
+	countries2		<- tolower(countries)
+	countries2		<- gsub(" ","",countries2)
+	countries2		<- gsub("-","",countries2)
+
+	for (i in 1:length(conts)) {
+		oo 	<- unlist(conts[i])
+		oo    <- tolower(oo)
+		oo	<- gsub(" ","",oo)
+		oo	<- gsub("-","",oo)
+		
+		for (j in 1:length(oo)) {
+			inds 	<- which(countries2==oo[j])
+			if (length(inds) > 0) {
+				continents[inds] <- attributes(conts[i])$names
+			}	 
+		}
+	}
+	
+	return (continents)
+
+  }
+
+
+}
+
+
 
 
 
