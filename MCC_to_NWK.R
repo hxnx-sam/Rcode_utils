@@ -9,21 +9,20 @@
 # 25 Sept 2013 - includes option to ladderize and force to bifuraction
 # 25 Sept 2013 - also assigns 0 support to nodes with no label
 
-# Rcode_utils is free software: you can redistribute it and/or modify it under the terms of the 
-# GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
-# Rcode_utils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
-# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-# See the GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License along with Rcode_utils.  
-# If not, see <http://www.gnu.org/licenses/>.
+# 18 Nov 2016 - now use read.annotated.trees in OutbreakTools
 
 
 # needs package ape
 library(ape)
 
-# FUNCTION DEFINITION
-MCC_to_NWK <- function( fname, doLadderize=FALSE, tol=1e-8, root0=TRUE ) {
+# 18 Nov 2016 - now use read.annotated.nexus in OutbreakTools
+library(OutbreakTools)
 
+
+# FUNCTION DEFINITION
+MCC_to_NWK <- function( fname, doLadderize=FALSE, tol=1e-8, root0=TRUE, doOrig=FALSE ) {
+
+  if (doOrig) {
 	# read the MCC tree file from TreeAnnotator
 	lines 	<- readLines(fname)
 
@@ -87,6 +86,23 @@ MCC_to_NWK <- function( fname, doLadderize=FALSE, tol=1e-8, root0=TRUE ) {
 	if (length(inds) > 0) {
 		pp[inds]	<- 0
 	}
+
+   } else {
+	tr <- read.annotated.nexus(fname)
+	pp  <- unlist(sapply(tr$annotations, function(e) e$posterior))
+
+	if (doLadderize) {
+		tr		<- multi2di(tr)
+		tr		<- ladderize(tr, right=FALSE)
+		einds		<- which(tr$edge.length < tol)
+		if (length(einds) > 0) {
+			tr$edge.length[einds] <- tol
+		}
+	}
+
+   }
+
+
 	tr$node.label <- format(pp, digits=4)
 
 	
