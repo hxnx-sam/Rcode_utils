@@ -3,8 +3,9 @@ Rcode_utils
 
 S. J. Lycett
 30 Sept 2013
+8  Mar  2018
 
-Copyright: 	Samantha Lycett 2013
+Copyright: 	Samantha Lycett 2013-2018
 License: 	GNU GPLv3
 
 ==============================================
@@ -21,7 +22,7 @@ To date I've been working on Influenza and the scripts are geared towards NCBI I
 Generally - open them in R, "compile" them into the workspace, then look towards the bottom of the script for examples.
 
 Sam standard fasta defline for flu
->{serotype}_{host}_{accession}_{strain}_{country}_{year}/{month}/{day}_{segname}
+> \>{serotype}\_{host}\_{accession}\_{strain}\_{country}\_{year}/{month}/{day}\_{segname}
 
 
 ## Useful links:

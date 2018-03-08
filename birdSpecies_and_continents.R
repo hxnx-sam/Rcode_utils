@@ -1,11 +1,10 @@
 # Rcode_utils is free software: you can redistribute it and/or modify it under the terms of the 
 # GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or any later version.
-# Rcode_utils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+# FluSubsample_Rshiny is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
 # without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
 # See the GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License along with Rcode_utils.  
 # If not, see <http://www.gnu.org/licenses/>.
-
 
 # functions to classify bird names to latin species names and countries to continents
 # S. J. Lycett
@@ -46,6 +45,10 @@
 # 25 Nov   2015 - Snowy Owl (stg)
 # 10 Feb   2016 - more countries and places (H5N8 work using GISAID)
 # 19 Feb   2016 - added more long range migrants for N5
+# 20 May   2016 - updated path
+# 6  Sept  2017 - updated for owl owl, anseriformes and phalacrocorax (H5N8 work)
+# 18 Feb 2018 - common porchard = common pochard
+# 19 Feb 2018 - Anser cygnoides = ans (Swan goose), bulbul, thrush = pas, condor = acc
 
 ######################################################################
 # function to classify birds in H5N1 - to bird order
@@ -86,6 +89,12 @@
 # updated 20 July 2015 - horned puffin = cha
 # updated 13 Nov  2015 - Anthropoides virgo = gru
 # updated 25 Nov  2015 - Strigiformes = stg, Snowy Owl
+# updated 29 Nov  2016 - cockatoo = psi
+# updated 9 Dec 2016 - 	pte = Pteroclidiformes, Syrrhaptes_paradoxus = sand grouse
+# updated 12 june 2017 - stg owls
+# updated 14 july 2017 - apo - swiftlet
+# updated 6 Sept 2017 - owl owl = stg, anseriformes = ans, Phalacrocorax = cormorant = pel
+# updated 19 Feb 2018
 birdClass	<- function( birdNames ) {
 
 	birdNames	<- tolower(birdNames)
@@ -128,9 +137,17 @@ birdClass	<- function( birdNames ) {
 	# quicker ! not that it matters terribly much, but still
 	birdNames <- gsub("crowned", "", birdNames)
 
+	# owl might get synoned with other things (e.g. fowl) so do it double
+	inds		<- which(birdNames=="owl")
+	if (length(inds) > 0) {
+		birdNames[inds] <- "owl owl"
+	}
+
 	birdOrders	<- array("-", length(birdNames))
 
-	acc	<- c("eagle","hawk","buzzard","bussard","hooded vulture")
+	apo   <- c("swiftlet")
+
+	acc	<- c("eagle","hawk","buzzard","bussard","hooded vulture","condor")
 
 	ans	<- c("dk","duck","mallard","teal","goose","gs","swan","cygnus","wigeon",
 			"munia","grebe","goldeneye","pochard","goosander",
@@ -140,9 +157,11 @@ birdClass	<- function( birdNames ) {
 			"greater scaup","mergus albellus","smew",
 			"canvasback","hooded merganser","lesser scaup","northern shoverl","brant",
 			"anas angustirostris","anas querquedula","ruddy sheldrake","scaup",
-			"anas_","anas ","anser fabalis","shoveller","tadorna","aythya fuligula","dendrocygna viduata")
+			"anas_","anas ","anser fabalis","shoveller","tadorna","aythya fuligula","dendrocygna viduata","mergus albellus",
+			"anseriformes","muscovy",
+			"common porchard","anser cygnoides")
 
-	cic	<- c("stork","condor","open-billed ibis","ibis")
+	cic	<- c("stork","open-billed ibis","ibis") #19 feb 2018 - why is condor in here ? #c("stork","condor","open-billed ibis","ibis")
 
 	cor	<- c("rollers")
 
@@ -150,34 +169,35 @@ birdClass	<- function( birdNames ) {
 
 	cha	<- c("shorebird","gull","tern","turnstone","dunlin","sandpiper","sanderling",
 			"red knot","redknot","knot","plover","red-necked stint","redneckedstint","curlew",
-			"rufous-necked stint","black-legged kittiwake","common murre","murre",
-			"arenaria interpres","thick-billed murre","arenaria-interpres",
+			"rufous-necked stint","red-necked_stint","rufous-necked_stint","black-legged kittiwake","common murre","murre",
+			"arenaria interpres","arenaria_interpres","thick-billed murre","arenaria-interpres",
 			"eurasian woodcock","lapwing","oystercatcher","common snipe","snipe",
 			"guillemot","larus argentatus","razorbill","larus michahellis","yellow-legged gull",
-			"larus","bar-tailed godwit","black-legged kittywake","horned puffin","puffin",
-			"common redshank")
+			"larus","bar-tailed godwit","black-tailed godwit","black-legged kittywake","horned puffin","puffin",
+			"common redshank","black-necked stilt")
 
 	cuc	<- c("cuckoo")
 
 	gal	<- c("chicken","pheasant","quail","turkey","sck","guinea","guineafowl","guinea_fowl",
 			"chukar","bustard","peacock","peahen","peafowl","partridge",
 			"poultry","chukkar","chukka","silky fowl","bantam","rooster","numida meleagris",
-			"chinese francolin")
+			"chinese francolin","pavo cristatus")
 
-	gru	<- c("coot","moorhen","hooded crane","black-neck crane","crane","anthropoides virgo")
+	gru	<- c("coot","moorhen","hooded crane","black-neck crane","crane","anthropoides virgo","gallinula chloropus")
 
-	fal	<- c("falcon","kestrel","peregrine","harrier","owl","eurasian eagel owl")
+	fal	<- c("falcon","kestrel","peregrine","harrier")
 
 	pas	<- c("sparrow","crow","magpie","pigeon","blackbird","myna",
 			"starling","wild bird","wildbird","shrike","robin","softbill",
 			"japanese white eye","japanesewhiteeye","common iora","commoniora",
 			"fairy bluebird","fairybluebird","rook",
 			"babbler","black bulbul","golden mountain thrush",
-			"japanese white-eye","silver-eared mesia","brambling","chinese hwamei",
-			"african stonechat","finch","raven","barn swallow","barnswallow",
-			"alder flycatcher","black-headed weaver","scaly thrush","campylorhamphus pucherani")
+			"japanese white-eye","japanese_white-eye","silver-eared mesia","brambling","chinese hwamei",
+			"african stonechat","finch","raven","barn swallow","barnswallow","swallow",
+			"alder flycatcher","black-headed weaver","scaly thrush","campylorhamphus pucherani","copsychus saularis",
+			"bulbul","thrush")
 
-	psi	<- c("parrot","conure","parakeet","psittacine","macaw","yellow-headed amazon","budgerigar")
+	psi	<- c("parrot","conure","parakeet","psittacine","macaw","yellow-headed amazon","budgerigar","cockatoo")
 
 	pro	<- c("shearwater")	
 	
@@ -187,17 +207,20 @@ birdClass	<- function( birdNames ) {
 
 	sph	<- c("penguin")
 
-	stg	<- c("snowy owl","snowy_owl","snowyowl")
+	stg	<- c("snowy owl","snowy_owl","snowyowl","long-eared owl","ural owl","eurasian eagel owl","owl owl")
 
 	tin	<- c("red-winged tinamou", "redwingedtinamou")
 
-	pel	<- c("pelican","great cormorant","greatcormorant", "cormorant", "ardea cinerea", "grey heron", "egret", "heron")
+	pel	<- c("pelican","great cormorant","greatcormorant", "cormorant", "phalacrocorax",
+			"ardea cinerea", "grey heron", "egret", "heron","ardea cinerea")
 
 	pic	<- c("great barbet")
 
-	orders <- list(	acc=acc,ans=ans,cic=cic,cor=cor,col=col,
+	pte	<- c("syrrhaptes paradoxus","sandgrouse")
+
+	orders <- list(	acc=acc,ans=ans,apo=apo,cic=cic,cor=cor,col=col,
 				cha=cha,cuc=cuc,gru=gru,gal=gal,fal=fal,
-				pas=pas,pel=pel,pro=pro,pic=pic,rhe=rhe,str=str,sph=sph,stg=stg,psi=psi,tin=tin)
+				pas=pas,pel=pel,pro=pro,pic=pic,pte=pte,rhe=rhe,str=str,sph=sph,stg=stg,psi=psi,tin=tin)
 
 	for (i in 1:length(orders)) {
 		oo	<- unlist(orders[i])
@@ -240,6 +263,8 @@ birdClass	<- function( birdNames ) {
 # updates 17 nov 2014
 # updates 22 nov 2014 - Ch = chicken
 # updates 25 mar 2015 - breeder_chicken => domestic
+# updated 6  Sept 2017 - mulard ducks are domestic
+# updated 19 Feb 2018 - Anser cygnoides are probably domestic (Swan goose)
 getWildDomestic <- function( bird ) {
 	bird2			<- tolower(bird)
 	bird2			<- gsub(" ","_",bird2)			# 2 Sept 2013
@@ -269,11 +294,18 @@ getWildDomestic <- function( bird ) {
 					(bird2=="turkey") |
 					(bird2=="village_chicken") |
 					(bird2=="muscovy_duck") | 
+					(bird2=="muscovy") |
 					(bird2=="bantam") |
 					(bird2=="breeder_duck") |
 				      (bird2=="broiler_duck") |
 					(bird2=="rooster") |
-					(bird2=="breeder_chicken") )
+					(bird2=="breeder_chicken") |
+					(bird2=="mulard") |
+					(bird2=="mulard_duck") |
+					(bird2=="korean_native_chicken") |
+					(bird2=="bronze_turkey") |
+					(bird2=="black_chicken") |
+					(bird2=="anser_cygnoides"))
 
 	wildDomestic[inds] <- "Domestic"
 	inds			 <- which(bird2=="mammal")
@@ -669,7 +701,7 @@ getProvinceOfChina <- function( places ) {
 
 USA_state_abbrev <- function( names, type="toState",
 					fname = "usa_state_abbreviations_nov_2014.txt", 
-					path = "//ris-fas1a.roslin.ed.ac.uk//slycett2//Rcode//") {
+					path = "") {
 
 	#names <- gsub("Interior_Alaska","Alaska",names)
 	#names <- gsub("Interior Alaska","Alaska",names)
@@ -712,7 +744,7 @@ USA_state_abbrev <- function( names, type="toState",
 
 Canada_state_abbrev <- function( names, type="toState",
 						fname = "canada_state_abbreviations_nov_2014.txt",
-						path = "//ris-fas1a.roslin.ed.ac.uk//slycett2//Rcode//") {
+						path = "") {
 
 	names <- gsub("StJohns","Newfoundland and Labrador",names,fixed=TRUE)
 	inds	<- which(names=="ALB")
@@ -762,6 +794,7 @@ Canada_state_abbrev <- function( names, type="toState",
 # http://en.wikipedia.org/wiki/United_Nations_geoscheme_for_Oceania
 # http://millenniumindicators.un.org/unsd/methods/m49/m49regin.htm
 # 17 july 2015 - added option to just return the entire list
+# 17 Feb 2018 - problem with locale in R studio with Sao Tome and Principe
 unGeoScheme <- function( countries, getFullList=FALSE ) {
 
 	CentralAsia <- c(		"Kazakhstan",
@@ -910,7 +943,7 @@ unGeoScheme <- function( countries, getFullList=FALSE ) {
     					"Equatorial Guinea",
     					"Gabon",
     					"Republic of the Congo",
-    					"Sao Tome and Príncipe","Sao Tome" )
+    					"Sao Tome and Principe","Sao Tome" )
 
 
 	NorthernAfrica <- c(	"Algeria",
